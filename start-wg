@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# Ideas taken from
+# https://github.com/cmulk/wireguard-docker
+# https://github.com/denisix/wireguard
+
+init() {
+	if [ ! -f /etc/wireguard/wg0.conf ]; then
+        echo "$(date): init wg0"
+		wg genkey | tee /etc/wireguard/wg0.key | wg pubkey > /etc/wireguard/wg0.pub
+		SERV_KEY=`cat /etc/wireguard/wg0.key`
+		cat > /etc/wireguard/wg0.conf << EOF
+[Interface]
+Address = 192.168.20.1/24
+ListenPort = 48651
+PrivateKey = ${SERV_KEY}
+EOF
+		chmod 600 /etc/wireguard/*
+	fi
+	
+	if [ ! -f /etc/wireguard/clients/smartphone.conf ]; then
+        echo "$(date): init smartphone"
+		[ -d /etc/wireguard/clients/ ] || mkdir -p /etc/wireguard/clients/
+		wg genkey | tee /etc/wireguard/clients/smartphone.key | wg pubkey > /etc/wireguard/clients/smartphone.pub
+		wg genpsk > /etc/wireguard/clients/smartphone.psk
+		SERV_PUB=`cat /etc/wireguard/wg0.pub`
+		CLIENT_KEY=`cat /etc/wireguard/clients/smartphone.key`
+		CLIENT_PUB=`cat /etc/wireguard/clients/smartphone.pub`
+		PSK=`cat /etc/wireguard/clients/smartphone.psk`
+		cat > /etc/wireguard/clients/smartphone.conf << EOF
+[Interface]
+Address = 192.168.20.2/32
+PrivateKey = ${CLIENT_KEY}
+DNS = ${DNS}
+
+[Peer]
+AllowedIPs = 0.0.0.0/0
+Endpoint = ${ENDPOINT}:48651
+PublicKey = ${SERV_PUB}
+PresharedKey = ${PSK}
+PersistentKeepalive = 25
+EOF
+		echo -e "\n[Peer]" >> /etc/wireguard/wg0.conf
+		echo "AllowedIPs = 192.168.20.2/32" >> /etc/wireguard/wg0.conf
+		echo "PublicKey = ${CLIENT_PUB}" >> /etc/wireguard/wg0.conf
+		echo "PresharedKey = ${PSK}" >> /etc/wireguard/wg0.conf
+		chmod 600 /etc/wireguard/clients/*
+	fi	
+}
+
+wg_up() {
+    echo "$(date): wg_up"
+    wg-quick up wg0
+    if [ $? -eq 0 ]; then 
+        wg && iptables -w -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    fi
+}
+
+wg_down() {
+    echo "$(date): wg_down"
+    wg-quick down wg0
+    iptables -w -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+}
+
+init
+wg_up
+
+finish() {
+    echo "$(date): finish"
+    wg_down
+    exit 0
+}
+
+trap finish TERM INT QUIT
+
+# '$!' is the process ID of the job most recently placed into the background
+sleep infinity & wait $!
