@@ -1,6 +1,6 @@
 [![Build](https://github.com/mibere/wireguard-alpine/actions/workflows/publish-image.yml/badge.svg?branch=main)](https://github.com/mibere/wireguard-alpine/actions/workflows/publish-image.yml)
 
-_Image for my personal use, not for the general public._
+Image for my personal use, not for the general public. Based on [Alpine Linux (edge)](https://www.alpinelinux.org/).
 
 ### Download pre-built Docker image for _armv7_
 ```
