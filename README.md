@@ -33,7 +33,7 @@ sudo nano /etc/sysctl.d/99-sysctl.conf
 sudo sysctl -p
 ```
 
-### Start container
+### Start container for the first time
 :exclamation: **Adapt the values for _DNS_ and _ENDPOINT_**
 
 ```
@@ -46,7 +46,7 @@ Show smartphone configuration as QR-code:
 docker exec -it wireguard qrencode -t ansiutf8 -r "/etc/wireguard/clients/smartphone.conf"
 ```
 
-### Update container
+### Update existing container
 :exclamation: **Adapt the values for _DNS_ and _ENDPOINT_** (see running container `docker exec -it wireguard env`)
 
 ```
