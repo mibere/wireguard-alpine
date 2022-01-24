@@ -27,7 +27,8 @@ sudo nano /etc/sysctl.d/99-sysctl.conf
 > net.core.rmem_default = 2097152  
 > net.core.rmem_max = 2097152  
 > net.core.wmem_default = 2097152  
-> net.core.wmem_max = 2097152
+> net.core.wmem_max = 2097152  
+> #net.core.somaxconn = (a minimum value of 256)
 
 ```
 sudo sysctl -p
