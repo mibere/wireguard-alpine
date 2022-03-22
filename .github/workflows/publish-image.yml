@@ -27,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: hadolint
-        uses: hadolint/hadolint-action@v1.6.0
+        uses: hadolint/hadolint-action@v1.7.0
 
   push:
     needs: lint
