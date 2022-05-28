@@ -1,7 +1,7 @@
 FROM alpine:edge
 COPY start-wg /usr/local/bin/
 RUN apk upgrade --no-cache && \
-	apk add --no-cache ca-certificates wireguard-tools libqrencode nc && \
+	apk add --no-cache ca-certificates wireguard-tools libqrencode netcat-openbsd && \
 	chmod 755 /usr/local/bin/start-wg && \
 	mkdir -p /etc/wireguard/ && \
 	rm -rf /var/cache/apk/* /tmp/* /var/tmp/* /var/log/*
