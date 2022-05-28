@@ -56,3 +56,5 @@ docker rm wireguard
 docker pull ghcr.io/mibere/wireguard-alpine
 docker run --name=wireguard -e DNS="192.168.1.1" -e ENDPOINT="my.dyn.dns" --restart=always --cap-add SYS_MODULE --cap-add NET_ADMIN --network=host -v wireguard:/etc/wireguard/ -d ghcr.io/mibere/wireguard-alpine
 ```
+<br/>
+:point_right: WireGuard is listening on port 48651
